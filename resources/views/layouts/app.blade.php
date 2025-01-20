@@ -21,8 +21,25 @@
     -->
     <nav class="bg-white shadow border-gray-200 dark:bg-gray-900">
         <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto py-4 px-6">
-            <a href="#" class="text-lg font-bold">To Do List</a>
+            <!-- Logo ou lien d'accueil -->
+            <a href="{{ route('tasks.index') }}" class="text-lg font-bold">To Do List</a>
 
+            <!-- Boutons pour filtrer les tâches -->
+            <div class="flex space-x-4">
+                <!-- Bouton pour afficher toutes les tâches -->
+                <a
+                    href="{{ route('tasks.index') }}"
+                    class="bg-blue-500 text-white px-5 py-3.5 rounded-lg hover:bg-blue-600 transition duration-300">
+                    Toutes les Tâches
+                </a>
+
+                <!--   Bouton pour afficher les tâches complétées -->
+                <a
+                    href="{{ route('tasks.completed') }}"
+                    class="bg-green-500 text-white px-5 py-3.5 rounded-lg hover:bg-green-600 transition duration-300">
+                    Tâches Complétées
+                </a>
+            </div>
         </div>
     </nav>
 
@@ -32,28 +49,6 @@
     //route('tasks.create') }}
     -->
     <section>
-        <div class="flex items-center justify-between py-4 px-6">
-            <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-6 py-3.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                <a href="#" class="hover:underline">
-                    Ajouter une Tâche
-                </a>
-            </button>
-
-            <form class="w-2/4">
-                <label for="search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                        </svg>
-                    </div>
-                    <input type="search" id="search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search" required />
-                    <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
-                </div>
-            </form>
-        </div>
-
-
         <div class="container mx-auto py-4 px-6">
             @yield('content')
         </div>
@@ -85,5 +80,34 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+
+    <script>
+        function toggleTaskCompletion(checkbox) {
+            const taskId = checkbox.getAttribute('data-task-id');
+            const completed = checkbox.checked;
+
+            // Envoyer une requête AJAX pour mettre à jour la tâche
+            fetch(`/tasks/${taskId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ completed: completed })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Tâche mise à jour avec succès');
+                    } else {
+                        console.error('Erreur lors de la mise à jour de la tâche');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                });
+        }
+    </script>
+
 </body>
 </html>

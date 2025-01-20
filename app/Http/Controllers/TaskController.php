@@ -12,17 +12,16 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::all();
-        return view('tasks.index', compact('tasks'));
+        $tasks = Task::orderBy('created_at', 'desc')->get();
 
-        /*return response()->json(
-            [
-                'status' => 'success',
-                'message' => '',
-                'response' => $tasks
-            ],
-            200
-        );*/
+        return view('tasks.index', compact('tasks'));
+    }
+
+    public function completed()
+    {
+        // Filtre les tâches complétées
+        $tasks = Task::where('completed', true)->get();
+        return view('tasks.index', compact('tasks'));
     }
 
     /**
@@ -46,16 +45,9 @@ class TaskController extends Controller
         ]);
 
         $task = Task::create($validatedData);
-        //return redirect()->route('tasks.index');
 
-        return response()->json(
-            [
-                'status' => 'success',
-                'message' => 'Task created successfully',
-                'response' => $task
-            ],
-            201
-        );
+        return redirect()->route('tasks.index')->with('status', 'Task created!');
+
     }
 
     /**
@@ -66,17 +58,10 @@ class TaskController extends Controller
         //
         //return view('tasks.show', compact('task'));
 
-        $task = Task::find($id);
+        /*$task = Task::find($id);
 
         if (is_null($task)) {
-            return response()->json(
-                [
-                    'status' => 'failed',
-                    'message' => 'Task not found',
-                    'response' => ''
-                ],
-                404
-            );
+            return view('errors.404');
         }
 
         return response()->json(
@@ -86,7 +71,7 @@ class TaskController extends Controller
                 'response' => $task
             ],
             200
-        );
+        );*/
     }
 
     /**
@@ -98,14 +83,7 @@ class TaskController extends Controller
         $task = Task::find($id);
 
         if (is_null($task)) {
-            return response()->json(
-                [
-                    'status' => 'failed',
-                    'message' => 'Task not found',
-                    'response' => ''
-                ],
-                404
-            );
+            return view('errors.404');
         }
 
         return view('tasks.edit', compact('task'));
@@ -120,14 +98,7 @@ class TaskController extends Controller
         $task = Task::find($id);
 
         if (is_null($task)) {
-            return response()->json(
-                [
-                    'status' => 'failed',
-                    'message' => 'Task not found',
-                    'response' => ''
-                ],
-                404
-            );
+            return view('errors.404');
         }
 
         $validatedData = $request->validate([
@@ -149,6 +120,32 @@ class TaskController extends Controller
         );
     }
 
+    public function updatecompleted(Request $request, $id)
+    {
+        $task = Task::find($id);
+
+        if (is_null($task)) {
+            return view('errors.404');
+        }
+
+        // Valide les données de la requête
+        $validatedData = $request->validate([
+            'completed' => 'required|boolean',
+        ]);
+
+        // Met à jour la tâche
+        $task->update($validatedData);
+
+        return response()->json(
+            [
+                'status' => 'success',
+                'message' => 'Task updated successfully',
+                'response' => $task
+            ],
+            200
+        );
+    }
+
     /**
      * Remove the specified resource from storage.
      */
@@ -158,27 +155,11 @@ class TaskController extends Controller
         $task = Task::find($id);
 
         if (is_null($task)) {
-            return response()->json(
-                [
-                    'status' => 'failed',
-                    'message' => 'Task not found',
-                    'response' => ''
-                ],
-                404
-            );
+            return view('errors.404');
         }
 
-
         $task->delete();
-        //return redirect()->route('tasks.index');
 
-        return response()->json(
-            [
-                'status' => 'success',
-                'info' => 'Task deleted successfully',
-                'response' => ''
-            ],
-            204
-        );
+        return redirect()->route('tasks.index')->with('status', 'Task deleted!');
     }
 }
