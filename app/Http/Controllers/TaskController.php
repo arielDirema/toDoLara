@@ -92,9 +92,22 @@ class TaskController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Task $task)
+    public function edit($id)
     {
         //
+        $task = Task::find($id);
+
+        if (is_null($task)) {
+            return response()->json(
+                [
+                    'status' => 'failed',
+                    'message' => 'Task not found',
+                    'response' => ''
+                ],
+                404
+            );
+        }
+
         return view('tasks.edit', compact('task'));
     }
 
@@ -155,7 +168,6 @@ class TaskController extends Controller
             );
         }
 
-        $this->authorize('delete', $task);
 
         $task->delete();
         //return redirect()->route('tasks.index');
