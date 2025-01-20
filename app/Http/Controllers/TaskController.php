@@ -13,16 +13,16 @@ class TaskController extends Controller
     public function index()
     {
         $tasks = Task::all();
-        //return view('tasks.index', compact('tasks'));
+        return view('tasks.index', compact('tasks'));
 
-        return response()->json(
+        /*return response()->json(
             [
                 'status' => 'success',
                 'message' => '',
                 'response' => $tasks
             ],
             200
-        );
+        );*/
     }
 
     /**
