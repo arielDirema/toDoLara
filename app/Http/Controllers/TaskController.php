@@ -130,7 +130,7 @@ class TaskController extends Controller
             [
                 'status' => 'success',
                 'message' => 'Task updated successfully',
-                'response' => $request->all()
+                'response' => $task
             ],
             201
         );
@@ -154,6 +154,8 @@ class TaskController extends Controller
                 404
             );
         }
+
+        $this->authorize('delete', $task);
 
         $task->delete();
         //return redirect()->route('tasks.index');
