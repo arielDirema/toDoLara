@@ -14,11 +14,15 @@ class TaskController extends Controller
     {
         $tasks = Task::all();
         //return view('tasks.index', compact('tasks'));
-        return json_encode([
-            'status' => 'success',
-            'info' => '',
-            'response' => $tasks
-        ]);
+
+        return response()->json(
+            [
+                'status' => 'success',
+                'message' => '',
+                'response' => $tasks
+            ],
+            200
+        );
     }
 
     /**
@@ -41,13 +45,17 @@ class TaskController extends Controller
             'due_date' => 'nullable|date',
         ]);
 
-        Task::create($validatedData);
+        $task = Task::create($validatedData);
         //return redirect()->route('tasks.index');
-        return json_encode([
-            'status' => 'success',
-            'info' => 'Task created successfully',
-            'response' => $request->all()
-        ]);
+
+        return response()->json(
+            [
+                'status' => 'success',
+                'message' => 'Task created successfully',
+                'response' => $task
+            ],
+            201
+        );
     }
 
     /**
@@ -61,18 +69,24 @@ class TaskController extends Controller
         $task = Task::find($id);
 
         if (is_null($task)) {
-            return json_encode([
-                'status' => 'failed',
-                'info' => 'Task not found',
-                'response' => ''
-            ]);
+            return response()->json(
+                [
+                    'status' => 'failed',
+                    'message' => 'Task not found',
+                    'response' => ''
+                ],
+                404
+            );
         }
 
-        return json_encode([
-            'status' => 'success',
-            'info' => '',
-            'response' => $task
-        ]);
+        return response()->json(
+            [
+                'status' => 'success',
+                'message' => '',
+                'response' => $task
+            ],
+            200
+        );
     }
 
     /**
@@ -93,11 +107,14 @@ class TaskController extends Controller
         $task = Task::find($id);
 
         if (is_null($task)) {
-            return json_encode([
-                'status' => 'failed',
-                'info' => 'Task not found',
-                'response' => ''
-            ]);
+            return response()->json(
+                [
+                    'status' => 'failed',
+                    'message' => 'Task not found',
+                    'response' => ''
+                ],
+                404
+            );
         }
 
         $validatedData = $request->validate([
@@ -109,11 +126,14 @@ class TaskController extends Controller
         $task->update($validatedData);
         //return redirect()->route('tasks.index');
 
-        return json_encode([
-            'status' => 'success',
-            'info' => 'Task updated successfully',
-            'response' => $request->all()
-        ]);
+        return response()->json(
+            [
+                'status' => 'success',
+                'message' => 'Task updated successfully',
+                'response' => $request->all()
+            ],
+            201
+        );
     }
 
     /**
@@ -125,20 +145,26 @@ class TaskController extends Controller
         $task = Task::find($id);
 
         if (is_null($task)) {
-            return json_encode([
-                'status' => 'failed',
-                'info' => 'Task not found',
-                'response' => ''
-            ]);
+            return response()->json(
+                [
+                    'status' => 'failed',
+                    'message' => 'Task not found',
+                    'response' => ''
+                ],
+                404
+            );
         }
 
         $task->delete();
         //return redirect()->route('tasks.index');
 
-        return json_encode([
-            'status' => 'success',
-            'info' => 'Task deleted successfully',
-            'response' => ''
-        ]);
+        return response()->json(
+            [
+                'status' => 'success',
+                'info' => 'Task deleted successfully',
+                'response' => ''
+            ],
+            204
+        );
     }
 }

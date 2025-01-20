@@ -3,7 +3,10 @@
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
-// Page d'accueil (liste des tâches)
+Route::get('/', function () {
+    return redirect()->route('tasks.index');
+});
+
 Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
 
 Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
